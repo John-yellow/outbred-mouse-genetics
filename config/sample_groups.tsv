@@ -1,5 +1,6 @@
 # sample_id	population	sex
-# Replace all demo rows with the 90 study samples before running stages 06–10.
+# Public synthetic template only; do not add real sample identifiers here.
+# For a private run, point SAMPLE_GROUPS in config/pipeline.local to a private table.
 DEMO_ICR1_01	ICR1	F
 DEMO_ICR1_02	ICR1	M
 DEMO_ICR2_01	ICR2	F

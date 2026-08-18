@@ -25,7 +25,7 @@ The workflow is based on the ten analysis scripts supplied with the study and fo
 
 ## Important assumptions
 
-- VCF sample IDs match `config/sample_groups.tsv`.
+- VCF sample IDs match the private sample-group table selected through `SAMPLE_GROUPS`.
 - Population labels are exactly `ICR1`, `ICR2`, and `KM`.
 - The first two PLINK FAM columns are FID and IID; the scripts use the FID as the population label after the optional ID update in stage 6.
 - The full workflow is computationally intensive. The demo directory is not designed to run all ten stages.

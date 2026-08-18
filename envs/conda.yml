@@ -22,4 +22,5 @@ dependencies:
 
 # VEP cache release 115 and the GRCm39 FASTA are intentionally not included.
 # Install/download them separately and set VEP_CACHE_DIR and VEP_FASTA in
-# config/pipeline.env before running scripts/05.Vep_annotate.sh.
+# the local configuration selected through CONFIG_FILE before running
+# scripts/05.Vep_annotate.sh.

@@ -27,6 +27,12 @@ The repository contains code, configuration templates, documentation, and small 
 
 The `data/demo/` directory is a miniature, non-production example for checking file formats and understanding the expected inputs. It is not a substitute for the 90-sample study data and is not intended to reproduce the manuscript's numerical results. Do not replace the tracked demo sample tables with real sample identifiers before uploading this repository.
 
+## Data availability
+
+This repository contains code, public configuration templates, and small synthetic examples. It does not redistribute the complete sequencing reads, BAM files, VCF/BCF files, reference genome, VEP cache, or generated population-genetic result files.
+
+The current project-level data record associated with the study is the CNCB-NGDC BioProject `PRJCA069117`. This is a BioProject accession; it is not a GSA sequencing-data accession or a GVM variation-data accession. The corresponding GSA and GVM accessions have not yet been obtained and are intentionally not fabricated here. See [`docs/data-availability.md`](docs/data-availability.md) for the current status.
+
 ## Quick start for the full analysis
 
 From the repository root:
@@ -81,7 +87,7 @@ data/raw/
     └── SAMPLE_ID_R2.fq.gz
 ```
 
-`config/sample_map.tsv` contains two whitespace-separated columns, `raw_name` and `clean_name`. `config/sample_groups.tsv` contains `sample_id`, `population`, and `sex`; the `sample_id` values must match the sample IDs in the VCF/PLINK files. The default population labels are `ICR1`, `ICR2`, and `KM`.
+The tracked `config/sample_map.tsv` and `config/sample_groups.tsv` files are public synthetic templates. They contain no study identifiers. For a private analysis, set `SAMPLE_MAP` and `SAMPLE_GROUPS` in the ignored `config/pipeline.local` file to private tables. The private `sample_map` contains `raw_name` and `clean_name`; the private `sample_groups` contains `sample_id`, `population`, and `sex`, with sample IDs matching the VCF/PLINK files. The population labels are `ICR1`, `ICR2`, and `KM`.
 
 The reference FASTA must use the GRCm39 chromosome names expected by the scripts: `1`–`19`, `X`, `Y`, and `MT`. The variant-calling and filtering thresholds are documented in `docs/workflow.md` and can be adjusted in the relevant script/configuration when a different study design requires it.
 
@@ -104,18 +110,14 @@ Do not force-add these directories to Git. Deposit complete sequencing and varia
 
 The software versions in `envs/conda.yml` mirror the versions reported in the manuscript where practical. VEP cache data are distributed separately from the code environment and are not bundled here. For a publication release, create a Git tag after the accession numbers and final configuration have been confirmed.
 
-## Citation and code availability
+## Citation
+
+The repository includes [`CITATION.cff`](CITATION.cff) for software citation. A DOI and a finalized manuscript citation are not asserted here. Please use the article's final citation once it is formally available.
+
+## License
+
+This repository is released under the [MIT License](LICENSE).
+
+## Code availability
 
 The ready-to-paste code-availability wording is in `docs/manuscript-code-availability.txt`. Please cite the associated manuscript and the data-accession records when reusing the workflow or the resulting genomic resource.
-
-## Upload to GitHub
-
-After reviewing the templates, without adding private sample tables or large data files:
-
-```bash
-git add .
-git commit -m "Add outbred mouse genetics workflow"
-git push -u origin main
-```
-
-The repository is initialized on the `main` branch locally and uses the manuscript's GitHub URL.
