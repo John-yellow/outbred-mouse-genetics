@@ -1,0 +1,25 @@
+name: outbred-mouse-genetics
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - fastp=0.23.2
+  - bwa=0.7.17
+  - samtools=1.10
+  - bcftools=1.10.2
+  - parallel
+  - plink=1.90b6.21
+  - admixture=1.3.0
+  - ensembl-vep
+  - r-base=4.3
+  - r-data.table
+  - r-dplyr
+  - r-ggplot2
+  - r-pheatmap
+  - r-cmplot
+
+# VEP cache release 115 and the GRCm39 FASTA are intentionally not included.
+# Install/download them separately and set VEP_CACHE_DIR and VEP_FASTA in
+# config/pipeline.env before running scripts/05.Vep_annotate.sh.

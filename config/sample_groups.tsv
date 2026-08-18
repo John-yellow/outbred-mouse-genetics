@@ -1,0 +1,8 @@
+# sample_id	population	sex
+# Replace all demo rows with the 90 study samples before running stages 06–10.
+DEMO_ICR1_01	ICR1	F
+DEMO_ICR1_02	ICR1	M
+DEMO_ICR2_01	ICR2	F
+DEMO_ICR2_02	ICR2	M
+DEMO_KM_01	KM	F
+DEMO_KM_02	KM	M

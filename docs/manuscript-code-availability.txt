@@ -1,0 +1,5 @@
+Custom scripts and parameter configurations used for sequencing data processing, quality filtering, read alignment, variant calling, variant quality control, functional annotation, and downstream population genetic analyses are publicly available through the GitHub repository:
+
+https://github.com/John-yellow/outbred-mouse-genetics
+
+The repository contains the analysis scripts and configuration templates but does not redistribute the complete sequencing reads, BAM files, VCF files, reference genome, or VEP cache. These data should be accessed through the public repositories and accession records specified in the manuscript.

@@ -1,0 +1,89 @@
+# -----------------------------------------------------------------------------
+# Large sequencing, reference, and analysis files: never commit these to Git.
+# -----------------------------------------------------------------------------
+
+# Raw and derived sequencing data
+data/raw/*
+!data/raw/README.md
+data/clean/*
+!data/clean/README.md
+data/bam/*
+!data/bam/README.md
+data/vcf/*
+!data/vcf/README.md
+
+*.fq
+*.fq.gz
+*.fastq
+*.fastq.gz
+*.bam
+*.bam.bai
+*.cram
+*.cram.crai
+*.sam
+*.vcf
+*.vcf.gz
+*.vcf.gz.tbi
+*.vcf.gz.csi
+*.bcf
+*.bcf.csi
+*.bcf.tbi
+*.g.vcf
+*.g.vcf.gz
+
+# Reference genomes and annotation caches
+reference/*
+!reference/README.md
+*.fa
+*.fa.gz
+*.fasta
+*.fasta.gz
+*.fai
+*.dict
+*.gff
+*.gff3
+*.gtf
+*.gtf.gz
+vep_cache/
+
+# Generated work and result directories
+work/*
+!work/README.md
+results/*
+!results/README.md
+!results/figures/
+!results/genetics/
+results/figures/*
+!results/figures/README.md
+results/genetics/*
+!results/genetics/README.md
+
+# PLINK, ADMIXTURE, and R outputs
+*.bed
+*.bim
+*.fam
+*.ped
+*.map
+*.nosex
+*.log
+*.hh
+*.Q
+*.P
+*.eigenvec
+*.eigenval
+*.prune.in
+*.prune.out
+*.keep
+*.RData
+*.rds
+*.pdf
+*.png
+*.svg
+*.html
+*.json
+
+# Local configuration and operating-system files
+config/*.local
+.DS_Store
+Thumbs.db
+*~
