@@ -1,9 +1,7 @@
-# sample_id	population	sex
-# Public synthetic template only; do not add real sample identifiers here.
-# For a private run, point SAMPLE_GROUPS in config/pipeline.local to a private table.
-DEMO_ICR1_01	ICR1	F
-DEMO_ICR1_02	ICR1	M
-DEMO_ICR2_01	ICR2	F
-DEMO_ICR2_02	ICR2	M
-DEMO_KM_01	KM	F
-DEMO_KM_02	KM	M
+# User-supplied population table; one tab-delimited row per sample.
+# Schema (no header row): sample_id<TAB>population<TAB>sex
+# sample_id: identifier matching the VCF/PLINK sample identifier.
+# population: one of the workflow population labels (ICR1, ICR2, or KM).
+# sex: sample sex label retained as metadata for the private analysis table.
+# Keep this tracked template free of real or placeholder individual IDs.
+# For a private run, set SAMPLE_GROUPS in config/pipeline.local.env to a private table.

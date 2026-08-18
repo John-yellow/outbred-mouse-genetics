@@ -1,26 +1,24 @@
-# -----------------------------------------------------------------------------
-# Large sequencing, reference, and analysis files: never commit these to Git.
-# -----------------------------------------------------------------------------
+# Code-only repository: local genomic data, reference resources, and outputs
+# must remain outside Git.
 
-# Raw and derived sequencing data
-data/raw/*
-!data/raw/README.md
-data/clean/*
-!data/clean/README.md
-data/bam/*
-!data/bam/README.md
-data/vcf/*
-!data/vcf/README.md
+# Local configuration overrides and sample tables
+config/*.local
+config/*.local.*
 
+# Sequencing and alignment files
 *.fq
 *.fq.gz
 *.fastq
 *.fastq.gz
 *.bam
 *.bam.bai
+*.bai
 *.cram
 *.cram.crai
+*.crai
 *.sam
+
+# Variant files and indexes
 *.vcf
 *.vcf.gz
 *.vcf.gz.tbi
@@ -30,10 +28,10 @@ data/vcf/*
 *.bcf.tbi
 *.g.vcf
 *.g.vcf.gz
+*.tbi
+*.csi
 
-# Reference genomes and annotation caches
-reference/*
-!reference/README.md
+# Reference genomes and annotation resources
 *.fa
 *.fa.gz
 *.fasta
@@ -44,19 +42,13 @@ reference/*
 *.gff3
 *.gtf
 *.gtf.gz
+reference/
 vep_cache/
 
-# Generated work and result directories
-work/*
-!work/README.md
-results/*
-!results/README.md
-!results/figures/
-!results/genetics/
-results/figures/*
-!results/figures/README.md
-results/genetics/*
-!results/genetics/README.md
+# Local generated data and analysis outputs
+data/
+results/
+work/
 
 # PLINK, ADMIXTURE, and R outputs
 *.bed
@@ -82,8 +74,7 @@ results/genetics/*
 *.html
 *.json
 
-# Local configuration and operating-system files
-config/*.local
+# Temporary and operating-system files
 .DS_Store
 Thumbs.db
 *~

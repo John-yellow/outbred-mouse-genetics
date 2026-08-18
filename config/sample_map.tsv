@@ -1,9 +1,6 @@
-# raw_name	clean_name
-# Public synthetic template only; do not add real sample identifiers here.
-# For a private run, point SAMPLE_MAP in config/pipeline.local to a private table.
-DEMO_ICR1_01	DEMO_ICR1_01
-DEMO_ICR1_02	DEMO_ICR1_02
-DEMO_ICR2_01	DEMO_ICR2_01
-DEMO_ICR2_02	DEMO_ICR2_02
-DEMO_KM_01	DEMO_KM_01
-DEMO_KM_02	DEMO_KM_02
+# User-supplied sample metadata table; one tab-delimited row per sample.
+# Schema (no header row): raw_name<TAB>clean_name
+# raw_name: directory name below RAW_DIR containing paired FASTQ files.
+# clean_name: sample name used for cleaned reads and downstream files.
+# Keep this tracked template free of real or placeholder individual IDs.
+# For a private run, set SAMPLE_MAP in config/pipeline.local.env to a private table.

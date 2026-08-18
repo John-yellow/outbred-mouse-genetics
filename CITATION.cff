@@ -1,8 +1,0 @@
-cff-version: 1.2.0
-message: "If you use this repository, please cite the software repository."
-title: "Outbred Mouse Genetics"
-type: software
-authors:
-  - name: "John-yellow and contributors"
-repository-code: "https://github.com/John-yellow/outbred-mouse-genetics"
-license: MIT
