@@ -75,10 +75,10 @@ Study-specific identifiers must remain in the private table and must not be copi
 
 | Variable | Purpose |
 |---|---|
-| `TARGET_CHROMS` | Chromosomes retained during BAM filtering and variant calling |
+| `TARGET_CHROMS` | Chromosomes selected for downstream variant calling |
 | `QC_CHROMS` | Chromosomes retained by the VCF QC stage |
 | `FASTP_THREADS`, `FASTP_JOBS` | fastp per-job threads and parallel sample jobs |
-| `BWA_THREADS`, `VIEW_THREADS`, `SORT_THREADS`, `MAPPING_JOBS` | Alignment, BAM filtering/sorting, and mapping parallelism |
+| `BWA_THREADS`, `VIEW_THREADS`, `SORT_THREADS`, `MAPPING_JOBS` | Alignment, BAM conversion/sorting, and mapping parallelism |
 | `BCFTOOLS_THREADS`, `CALL_JOBS`, `REGION_SIZE` | Variant calling threads, region jobs, and window size |
 | `VEP_FORKS` | VEP worker count |
 | `ADMIXTURE_K`, `ADMIXTURE_CV`, `ADMIXTURE_THREADS` | ADMIXTURE model, cross-validation setting, and thread count |

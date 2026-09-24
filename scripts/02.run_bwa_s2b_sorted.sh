@@ -12,7 +12,6 @@ require_cmd bwa samtools xargs find nproc
 CLEAN_DIR="$(pipeline_path "${CLEAN_DIR:-data/clean}")"
 BAM_DIR="$(pipeline_path "${BAM_DIR:-data/bam}")"
 REF_GENOME="$(pipeline_path "${REFERENCE_FASTA:-reference/Mus_musculus.GRCm39.dna.primary_assembly.fa}")"
-TARGET_CHROMS="${TARGET_CHROMS:-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 X Y MT}"
 
 BWA_THREADS="${BWA_THREADS:-8}"
 VIEW_THREADS="${VIEW_THREADS:-1}"
@@ -30,7 +29,6 @@ process_sample() {
     local sample_name
     local final_bam
     local bwa_log
-    local chroms=()
 
     r1_file="$(find "$sample_dir" -maxdepth 1 -type f -name '*_R1_clean.fq.gz' | sort | head -n 1)"
     r2_file="$(find "$sample_dir" -maxdepth 1 -type f -name '*_R2_clean.fq.gz' | sort | head -n 1)"
@@ -43,7 +41,6 @@ process_sample() {
     sample_name="$(basename "$r1_file" '_R1_clean.fq.gz')"
     final_bam="$BAM_DIR/${sample_name}.sorted.bam"
     bwa_log="$BAM_DIR/${sample_name}.bwa.log"
-    read -r -a chroms <<< "$TARGET_CHROMS"
 
     if [[ -s "$final_bam" && -s "${final_bam}.bai" ]]; then
         if samtools quickcheck "$final_bam" >/dev/null 2>&1; then
@@ -61,7 +58,7 @@ process_sample() {
     if ! bwa mem -t "$BWA_THREADS" \
         -R "@RG\tID:${sample_name}\tPL:ILLUMINA\tSM:${sample_name}" \
         "$REF_GENOME" "$r1_file" "$r2_file" 2>"$bwa_log" | \
-        samtools view -b -@ "$VIEW_THREADS" - "${chroms[@]}" | \
+        samtools view -b -@ "$VIEW_THREADS" - | \
         samtools sort -@ "$SORT_THREADS" -m 2G -o "$final_bam" -; then
         echo "ERROR: alignment failed for $sample_name; see $bwa_log" >&2
         rm -f -- "$final_bam" "${final_bam}.bai"
@@ -83,7 +80,7 @@ process_sample() {
 }
 
 export -f process_sample
-export REF_GENOME BAM_DIR TARGET_CHROMS BWA_THREADS VIEW_THREADS SORT_THREADS
+export REF_GENOME BAM_DIR BWA_THREADS VIEW_THREADS SORT_THREADS
 
 sample_count="$(find "$CLEAN_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)"
 if [[ "$sample_count" -eq 0 ]]; then

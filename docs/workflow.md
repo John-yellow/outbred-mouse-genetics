@@ -54,7 +54,7 @@ population-genetic plots and summary tables
 ## Stages 1–5: sequence processing and variants
 
 1. `01.run_fastp.sh` discovers paired reads in one directory per sample and runs fastp. The private sample map connects each raw directory name to the cleaned-read sample name.
-2. `02.run_bwa_s2b_sorted.sh` aligns reads to the GRCm39 primary assembly with BWA-MEM, retains the configured chromosome set, and creates sorted/indexed BAM files.
+2. `02.run_bwa_s2b_sorted.sh` aligns reads to the GRCm39 primary assembly with BWA-MEM, retains the complete reference-genome alignment results, and creates coordinate-sorted/indexed BAM files. Chromosome selection is performed by downstream analysis stages when required.
 3. `03.bcftools_SNPcalling.sh` reads the BAM header from the first sorted BAM, creates non-overlapping windows, jointly calls variants with bcftools, and concatenates the interval VCFs.
 4. `04.vcf_qc.sh` selects the configured chromosomes, normalizes records against the reference, recalculates `AN`, `AC`, and `MAF`, removes unused alternate alleles, and applies the filters encoded in the script:
 
