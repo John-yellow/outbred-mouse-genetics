@@ -1,0 +1,32 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5882289..0310940 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 4.1)
++cmake_minimum_required(VERSION 3.16)
+ project(FastDup)
+ set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+diff --git a/src/main.cpp b/src/main.cpp
+index 38bbda4..14370e3 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -217,10 +217,14 @@ int main(int argc, char *argv[]) {
+     }
+
+     spdlog::info("fast markduplicates start");
+-    MarkDuplicates();
++    const int markdup_status = MarkDuplicates();
++    if (markdup_status != 0) {
++        spdlog::error("duplicate marking failed with status {}", markdup_status);
++        return markdup_status < 0 ? 1 : markdup_status;
++    }
+     spdlog::info("fast markduplicates end");
+
+     DisplayProfiling(1);
+
+     return 0;
+-}
+\ No newline at end of file
++}

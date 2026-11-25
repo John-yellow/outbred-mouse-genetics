@@ -78,3 +78,7 @@ work/
 .DS_Store
 Thumbs.db
 *~
+
+# Portable configuration examples and sanitized build provenance are part of the source package.
+!config/qc_run_config.example.json
+!patches/fastdup_build_provenance.json

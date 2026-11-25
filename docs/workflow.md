@@ -1,82 +1,43 @@
 # Workflow
 
-This document describes the execution order and the principal file types used by the ten scripts. Paths are read from the shell configuration selected through `CONFIG_FILE`; the R scripts also accept explicit input and output paths.
+The workflow begins with provider-supplied quality-controlled paired-end FASTQ files (NGDC GSA `CRA046460`) listed in `config/sample_manifest.tsv`. `legacy/v1/scripts_legacy/01.run_fastp.sh` is retained as an optional preprocessing script for raw reads.
 
-## Execution order
+## Run order
 
-```text
-paired-end FASTQ
-    ↓
-01.run_fastp.sh
-    ↓
-clean FASTQ and QC reports
-    ↓
-02.run_bwa_s2b_sorted.sh
-    ↓
-sorted/indexed BAM
-    ↓
-03.bcftools_SNPcalling.sh
-    ↓
-raw variant VCF
-    ↓
-04.vcf_qc.sh
-    ↓
-filtered SNP VCF
-    ↓
-05.Vep_annotate.sh
-    ↓
-annotated SNP VCF
-    ↓
-06.Genetic_Val.sh and 07.split_fam.sh
-    ↓
-PLINK, PCA, FST, ADMIXTURE, and population-specific files
-    ↓
-08.den.R, 09.PCA.R, and 10.GBC.R
-    ↓
-population-genetic plots and summary tables
-```
+Run from the repository root after copying config/pipeline.env.example to config/pipeline.env and editing it:
 
-## Script reference
+1. scripts/01_align.sh — BWA-MEM2 v2.3 alignment to the configured GRCm39 reference (checks for `${REFERENCE_FASTA}.bwt.2bit.64` and builds the BWA-MEM2 index if missing); coordinate sorting and indexing.
+2. scripts/02_mark_duplicates.sh — FastDup 1.0.0 marks duplicates and retains them in BAM with the duplicate flag.
+3. Run interval calling with the configured paths and resources:
 
-| Step | Script | Main input | Main output |
-|---|---|---|---|
-| 01 | `scripts/01.run_fastp.sh` | Paired-end FASTQ directories and the private sample map | Cleaned paired-end FASTQ files plus fastp HTML/JSON reports |
-| 02 | `scripts/02.run_bwa_s2b_sorted.sh` | Cleaned FASTQ and GRCm39 FASTA | Coordinate-sorted, indexed BAM files |
-| 03 | `scripts/03.bcftools_SNPcalling.sh` | Sorted BAM files and GRCm39 FASTA | Joint raw VCF and index |
-| 04 | `scripts/04.vcf_qc.sh` | Raw VCF and GRCm39 FASTA | Filtered biallelic SNP VCF and index |
-| 05 | `scripts/05.Vep_annotate.sh` | Filtered VCF, GRCm39 FASTA, and offline VEP cache | VEP-annotated VCF and optional index |
-| 06 | `scripts/06.Genetic_Val.sh` | Annotated VCF and private population table | PLINK datasets, LD-pruned genotypes, PCA, pairwise FST, and ADMIXTURE files |
-| 07 | `scripts/07.split_fam.sh` | Renamed VCF and private population table | Population-specific PLINK text datasets |
-| 08 | `scripts/08.den.R` | Population-specific PLINK `.map` files | Chromosome-density PDF plots |
-| 09 | `scripts/09.PCA.R` | PLINK eigenvector/eigenvalue files | PCA PDF and R workspace |
-| 10 | `scripts/10.GBC.R` | ADMIXTURE Q matrix and PLINK FAM file | ADMIXTURE PDF and group-level ancestry tables |
+       source config/pipeline.env
+       python3 scripts/03_call_windows.py          --reference "$REFERENCE_FASTA"          --manifest "$SAMPLE_MANIFEST"          --bam-dir "$MARKED_DIR"          --ploidy config/ploidy.tsv          --output-dir "$CALL_DIR"          --bcftools "$BCFTOOLS"          --samtools "$SAMTOOLS"          --jobs "$CALL_JOBS"          --call-threads "$CALL_THREADS"
 
-## Stages 1–5: sequence processing and variants
+   The script expects files named SAMPLE.marked.bam and their indexes under MARKED_DIR. It writes 10-Mb windows for autosomes and X non-PAR and concatenates them in reference order.
+4. scripts/04_filter_sets.sh — normalize, mask low-quality sample genotypes, recalculate allele statistics, and write candidate and main sets.
+5. scripts/05_annotate_vep.sh — annotate the candidate set once with VEP 115.2/cache 115 and join CSQ to candidate and main callsets by CHROM/POS/REF/ALT.
+6. Prepare the QC work directory described below, then run scripts/06_qc_summary.py WORKDIR.
+7. Run scripts/07_known_novel_spectrum.py --bcf ANNOTATED_MAIN_BCF --output-dir OUTPUT_DIR to summarize exact dbSNP 150 matches and plot the allele-frequency spectrum.
+8. `scripts/08_convert_release_vcfs.sh` — convert the annotated BCF callsets to BGZF-compressed `VCF.gz` with `CSI` indexes and validate output integrity via `scripts/validate_release_vcf.py`.
 
-1. `01.run_fastp.sh` discovers paired reads in one directory per sample and runs fastp. The private sample map connects each raw directory name to the cleaned-read sample name.
-2. `02.run_bwa_s2b_sorted.sh` aligns reads to the GRCm39 primary assembly with BWA-MEM, retains the complete reference-genome alignment results, and creates coordinate-sorted/indexed BAM files. Chromosome selection is performed by downstream analysis stages when required.
-3. `03.bcftools_SNPcalling.sh` reads the BAM header from the first sorted BAM, creates non-overlapping windows, jointly calls variants with bcftools, and concatenates the interval VCFs.
-4. `04.vcf_qc.sh` selects the configured chromosomes, normalizes records against the reference, recalculates `AN`, `AC`, and `MAF`, removes unused alternate alleles, and applies the filters encoded in the script:
+## QC work directory
 
-   ```text
-   QUAL >= 30 && MAF > 0.01 && F_MISSING == 0 && DP >= 5 && GQ >= 20
-   ```
+scripts/06_qc_summary.py expects:
 
-   The output is restricted to biallelic SNPs.
-5. `05.Vep_annotate.sh` performs offline mouse VEP annotation for assembly GRCm39 using cache release 115.
+- state/run_config.json, based on config/qc_run_config.example.json;
+- inputs/sample_manifest.tsv, inputs/ploidy.tsv, and inputs/reference.fa.fai;
+- results/main_variants_vep115_GRCm39.bcf and its index;
+- state/, logs/, stats/, and plots/ directories.
 
-## Stages 6–10: population genetics
+The run configuration records the expected main record count, sample count, and tool executable names. Paths in the configuration are relative to WORKDIR unless absolute.
 
-6. `06.Genetic_Val.sh` assigns variant IDs as `CHROM:POS`, creates PLINK datasets, updates population labels from the private group table, performs LD pruning with `50 5 0.2`, runs PCA, estimates pairwise FST, and runs ADMIXTURE with the configured `K` value.
-7. `07.split_fam.sh` uses the private group table to make population-specific PLINK text datasets for `ICR1`, `ICR2`, and `KM`, applying the MAF setting encoded in the script.
-8. `08.den.R` reads population-specific PLINK map files and creates chromosome-density plots with CMplot.
-9. `09.PCA.R` reads PLINK eigenvectors and eigenvalues and creates the PC1/PC2 plot.
-10. `10.GBC.R` reads the ADMIXTURE Q matrix and PLINK FAM file, orders samples by population, and writes the ADMIXTURE plot and group-level ancestry tables.
+## Production settings recorded for this dataset
 
-## Input and output assumptions
+- Reference: GRCm39 RefSeq GCF_000001635.27; FASTA SHA-256 ca6f2442484586b1cd8627e69394eabfe1fdb01f748bd1f089058ff3c0fa1b47.
+- Alignment: BWA-MEM2 v2.3 release binary, -t 32 -K 50000000; samtools 1.10 sort -@ 2 -m 768M -l 3. BAM @PG records the upstream 2.2.1 version string.
+- Duplicate marking: FastDup 1.0.0, upstream commit 7b3f62587283a257fd38c5c20ceeda0364c285ef; local patch and sanitized build record are in patches/. Production settings: SUM_OF_BASE_QUALITIES, 32 threads, read-name regex disabled, BAI index; duplicates are marked, not removed.
+- Calling: bcftools/htslib 1.10.2; -q 20 -Q 20 -E -d 500 --ff UNMAP,SECONDARY,QCFAIL,DUP -p -m 3 -F 0.25; -a FORMAT/DP,FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/SP,INFO/AD; bcftools call -mAv -f GQ,GP with sample-sex and ploidy files. GRCm39 PAR X:168,752,755–169,376,592 (1-based inclusive) is excluded; it is not diploid-called.
+- Filtering: mask a GT when FORMAT/DP or FORMAT/GQ is absent, DP<5, or GQ<20; recalculate AC/AN/AF and missingness. Candidate: biallelic SNP, QUAL≥30, 0<AC<AN. Main adds F_MISSING≤0.05. Neither set has a MAF floor.
+- Annotation: VEP 115.2, cache 115, GRCm39, GENCODE M38, dbSNP 150. Original candidate and main callset fields are retained.
 
-- The reference is *Mus musculus* GRCm39 with chromosome names compatible with the configured target chromosome list.
-- The sample map has two tab-delimited columns without a header: `raw_name` and `clean_name`.
-- The population table has three tab-delimited columns without a header: `sample_id`, `population`, and `sex`. The sample IDs must match VCF/PLINK identifiers, and the population labels must be `ICR1`, `ICR2`, or `KM` for the current scripts.
-- Intermediate and final files are written to the configured local data, results, reference, and work paths. Those paths are intentionally not represented by tracked directories in this repository.
-- The workflow is computationally intensive and requires the external input data, reference indexes, and VEP cache described in the README and configuration guide.
+These thread and memory values describe the production run. For other machines, resource allocations can change while evidence-backed study thresholds and sample/ploidy settings remain fixed.

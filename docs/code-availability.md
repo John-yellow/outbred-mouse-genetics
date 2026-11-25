@@ -1,9 +1,3 @@
-# Code availability
+# Code and data availability
 
-The analysis scripts, configuration framework, software environment, and workflow documentation are publicly available at:
-
-<https://github.com/John-yellow/outbred-mouse-genetics>
-
-This repository is a code-and-workflow release. It does not redistribute raw sequencing reads, processed genomic files, reference genomes, annotation caches, or complete analysis outputs. The workflow can reproduce the documented computational procedures when the corresponding input data and external reference resources are available locally.
-
-The sequencing study associated with this workflow is registered under CNCB-NGDC BioProject accession **PRJCA069117**.
+The variant calling, annotation, quality-control, and release-validation workflow is implemented in the numbered scripts under `scripts/`. Quality-controlled Illumina NovaSeq X Plus paired-end sequencing reads are archived in NGDC GSA (`CRA046460`, BioProject `PRJCA069117`), and the full-genotype candidate (16,529,182 SNPs) and main (13,076,115 SNPs) biallelic SNP callsets are publicly available in NGDC GVM (`GVM001647`, `https://ngdc.cncb.ac.cn/gvm/getProjectDetail?project=GVM001647`).

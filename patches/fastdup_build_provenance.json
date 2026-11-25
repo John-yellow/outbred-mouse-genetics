@@ -1,0 +1,29 @@
+{
+  "software": "FastDup",
+  "version": "1.0.0",
+  "upstream_repository": "https://github.com/zzhofict/FastDup",
+  "upstream_commit": "7b3f62587283a257fd38c5c20ceeda0364c285ef",
+  "source_patch": "FastDup-local.patch",
+  "patches": [
+    "Lowered the CMake minimum version from 4.1 to 3.16; C++17 remains enabled.",
+    "Propagated a nonzero MarkDuplicates() return code to the process exit status."
+  ],
+  "build_toolchain": {
+    "cmake": "3.16.3",
+    "gcc": "9.4.0",
+    "g++": "9.4.0",
+    "htslib": "bundled static build",
+    "libcurl": "7.68.0",
+    "openssl": "1.1.1f",
+    "build_parallelism": 4
+  },
+  "tested_production_binary_sha256": "e122a5ef6a4cc1ce1181a2ebab843a18cf961ea480d10f837cccc074d324673c",
+  "production_command_options": [
+    "--num-threads 32",
+    "--duplicate-scoring-strategy SUM_OF_BASE_QUALITIES",
+    "--read-name-regex null",
+    "--create-index",
+    "--index-format BAI"
+  ],
+  "duplicate_policy": "Mark-only; duplicate records are retained with duplicate flags."
+}

@@ -1,0 +1,12 @@
+{
+  "main_bcf": "results/main_variants_vep115_GRCm39.bcf",
+  "sample_manifest": "inputs/sample_manifest.tsv",
+  "ploidy_tsv": "inputs/ploidy.tsv",
+  "reference_fai": "inputs/reference.fa.fai",
+  "expected_main_records": 13076115,
+  "sample_count": 90,
+  "plink_threads": 16,
+  "bcftools": "bcftools",
+  "plink2": "plink2",
+  "rscript": "Rscript"
+}
